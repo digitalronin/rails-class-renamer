@@ -31,5 +31,5 @@ I *strongly* recommend that you start from a clean git checkpoint, whenever you 
 
 ## BLOGPOST
 
-    [https://digitalronin.github.io/2014/12/19/rails-class-renamer](https://digitalronin.github.io/2014/12/19/rails-class-renamer)
+    https://digitalronin.github.io/2014/12/19/rails-class-renamer
 
