@@ -1,25 +1,27 @@
+# Rails Class Renamer
+
 Rename a class in a Rails project. This will rename the corresponding source code and spec files, and search and replace the class name in your code.
 
 Word boundaries are honoured, so renaming the class "Foo" should not affect the class "FooBar".
 
-INSTALLATION
+## INSTALLATION
 
 Put the file "rename_class" somewhere on your PATH and make it executable.
 
-USAGE
+## USAGE
 
     rename_class Foo Bar
 
 NB: The script should be invoked from the root directory of a rails project.
 
-ASSUMPTIONS/PRE-REQUISITES
+## ASSUMPTIONS/PRE-REQUISITES
 
 * Requires ActiveSupport (for CamelCase <-> snake_case conversions)
 * Assumes that class FooBar is in a file (somewhere) called foo_bar.rb
 * Assumes that *all* files called foo_bar.rb should be renamed if class FooBar is renamed
 * Only works on Unixy systems with sensible implmentations of 'find', 'grep' and 'sed' (it works on a Mac).
 
-CAVEATS
+## CAVEATS
 
 I *strongly* recommend that you start from a clean git checkpoint, whenever you use this tool, so that you can easily roll back any changes with; "git checkout . ; git clean -f"
 
