@@ -1,0 +1,96 @@
+#!/usr/bin/env ruby
+
+require 'active_support'
+require 'pp'
+
+include ActiveSupport::Inflector
+
+class RailsClassRenamer
+  attr_reader :old_name, :new_name
+
+  def initialize(old_name, new_name)
+    @old_name = old_name
+    @new_name = new_name
+    validate
+  end
+
+  def run
+    rename_files
+    search_and_replace
+  end
+
+  private
+
+  def rename_files
+    rename_class_files
+    rename_spec_files
+  end
+
+  def search_and_replace
+    execute "find * -type f -name *.rb | xargs grep -wl #{old_name} | xargs #{sed_cmd}"
+  end
+
+  def sed_cmd
+    "sed -i '' 's/\\([^a-zA-Z]\\)#{old_name}\\([^a-zA-Z]\\)/\\1#{new_name}\\2/g'"
+  end
+
+  def rename_class_files
+    find_files(basename(old_name)).each do |f|
+      dir  = File.dirname(f)
+      from = File.join(dir, basename(old_name))
+      to   = File.join(dir, basename(new_name))
+      execute "mv #{from} #{to}"
+    end
+  end
+
+  def rename_spec_files
+    find_files(base_specfile_name(old_name)).each do |f|
+      dir  = File.dirname(f)
+      from = File.join(dir, base_specfile_name(old_name))
+      to   = File.join(dir, base_specfile_name(new_name))
+      execute "mv #{from} #{to}"
+    end
+  end
+
+  def basename(name)
+    "#{underscore(name)}.rb"
+  end
+
+  def base_specfile_name(name)
+    "#{underscore(name)}_spec.rb"
+  end
+
+  def find_files(name)
+    cmd = "find * -type f -name #{name}"
+    execute(cmd).split("\n")
+  end
+
+  def log(msg)
+    puts [Time.now.strftime("%Y-%m-%d %H:%M:%S"), msg].join(' ')
+  end
+
+  def execute(cmd)
+    log "CMD: #{cmd}"
+    `#{cmd}`
+  end
+
+  def validate
+    validate_name old_name
+    validate_name new_name
+  end
+
+  def validate_name(name)
+    raise "Can't handle namespaced classname #{name}" if name.match(/::/)
+    raise "Class name must be in CamelCase: #{name}" unless name.match(/^[A-Z]/)
+  end
+end
+
+############################################################
+
+old_name = ARGV.shift
+new_name = ARGV.shift
+
+puts "Renaming #{old_name} to #{new_name}"
+
+RailsClassRenamer.new(old_name, new_name).run
+
