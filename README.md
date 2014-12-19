@@ -8,7 +8,7 @@ Put the file "rename_class" somewhere on your PATH and make it executable.
 
 USAGE
 
-   rename_class Foo Bar
+    rename_class Foo Bar
 
 NB: The script should be invoked from the root directory of a rails project.
 
